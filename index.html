@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/moon.css">
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/one-dark.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section id="intro" class="center">
+                <h1>Boas práticas de testes</h1>
+                <p>Israel Silvino Melo Batista</p>
+            </section>
+            <section id="motivacao">
+                <header class="header">Por que fazer testes automatizados?</header>
+                <ul>
+                    <li>Verificar a validade e funcionalidade do código escrito.</li>
+                    <li>Complementar a documentação no entendimento de como a aplicação funciona.
+                    </li>
+                    <li>Garantir a retrocompatibilidade após mudanças no código.</li>
+                    <li>Permitir a manutenção e refatoração do código de forma eficiente.</li>
+                    <li>Exigências de cobertura de testes no controle de qualidade.</li>
+                </ul>
+            </section>
+            <section id="tipos-testes">
+                Principais tipos de testes:
+                <p>Testes de API</p>
+                <p>Testes unitários</p>
+            </section>
+            <section id="restassured-intro" data-auto-animate>
+                <header class="header">
+                    <h1>Testes de API</h1>
+                </header>
+                <div class="h-container">
+                    <div class="left-section">
+                        <h3 data-id="subtitle">RestAssured</h3>
+                        <p data-id="explanation">Simula as requisições HTTP e permite navegar pelo JSON da resposta</p>
+                    </div>
+                    <div class="right-section">
+                        <pre><code data-id="code-snippet" data-line-numbers>
+given()
+    .contentType(MediaType.APPLICATION_JSON)
+    .header("X-Auth-Token", token)
+    .queryParam("pagina", 1)
+    .body(requisicao)
+    .when()
+    .post("/api/v1/usuarios")
+    .then()
+    .statusCode(200)
+    .body("qtdUsuarios", equalTo(3))
+    .body("usuarios[0].id", equalTo(1))
+    .body("usuarios[0].nome", equalTo("João da Silva"));
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section id="restassured-methods" data-auto-animate>
+                <header class="header">
+                    <h1>Testes de API</h1>
+                </header>
+                <div class="h-container">
+                    <div class="left-section">
+                        <h3 data-id="subtitle">RestAssured</h3>
+                        <p data-id="explanation">Especificação da requisição</p>
+                    </div>
+                    <div class="right-section">
+                        <pre><code data-id="code-snippet" data-line-numbers="2-8|2|3|4|5|6|7-8|2-8|9-13|10|11-13">
+given()
+    .contentType(MediaType.APPLICATION_JSON)
+    .header("X-Auth-Token", token)
+    .queryParam("pagina", 1)
+    .body(requisicao)
+    .when()
+    .post("api/v1/usuarios")
+    .then()
+    .statusCode(200)
+    .body("qtdUsuarios", equalTo(3))
+    .body("usuarios[0].id", equalTo(1))
+    .body("usuarios[0].nome", equalTo("João da Silva"));
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section id="valores-resposta" data-auto-animate>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="4-11">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="3">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="5">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="4">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="6">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="5">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="7">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="6">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="8">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="7">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="9">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="8">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="10">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section data-auto-animate="">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando valores na resposta</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="9">
+{
+    "string": "Olá, mundo!",
+    "inteiro": 123,
+    "decimal": 123.45,
+    "inteiroLongo": 12345678901234,
+    "verdadeiro": true,
+    "falso": false,
+    "nulo": null
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="11">
+when()
+    .get("api/v1/valores")
+    .then()
+    .body("string", equalTo("Olá, mundo!"))
+    .body("inteiro", equalTo(123))
+    .body("decimal", equalTo(123.45f))
+    .body("inteiroLongo", equalTo(12345678901234L))
+    .body("verdadeiro", equalTo(true))
+    .body("falso", equalTo(false))
+    .body("nulo", nullValue());
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            <section id="objeto-aninhado" data-auto-animate>
+                <section id="obj-slide-1" data-auto-animate data-transition="fade">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando objetos aninhados</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "nome": "João da Silva",
+    "endereco": {
+        "rua": "Rodovia Seixa Dórea",
+        "numero": 123,
+        "cidade": "Japaratuba",
+        "estado": "SE",
+        "cep": "49960-000"
+    }
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/objeto")
+    .then()
+    .body("nome", equalTo("João da Silva"))
+    .body("endereco.rua", equalTo("Rodovia Seixas Dórea"))
+    .body("endereco.numero", equalTo(123))
+    .body("endereco.cidade", equalTo("Japaratuba"))
+    .body("endereco.estado", equalTo("SE"))
+    .body("endereco.cep", equalTo("49960-000"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-slide-2" data-auto-animate data-transition="fade">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando objetos aninhados</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="4-9">
+{
+    "nome": "João da Silva",
+    "endereco": {
+        "rua": "Rodovia Seixas Dórea",
+        "numero": 123,
+        "cidade": "Japaratuba",
+        "estado": "SE",
+        "cep": "49960-000"
+    }
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="6-10">
+when()
+    .get("/api/v1/objeto")
+    .then()
+    .body("nome", equalTo("João da Silva"))
+    .body("endereco.rua", equalTo("Rodovia Seixas Dórea"))
+    .body("endereco.numero", equalTo(123))
+    .body("endereco.cidade", equalTo("Japaratuba"))
+    .body("endereco.estado", equalTo("SE"))
+    .body("endereco.cep", equalTo("49960-000"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            <section id="arrays">
+                <section id="array-slide-1" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Acessando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    tags: [
+        "Java",
+        "Sessão técnica",
+        "RestAssured"
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code class="fragment" data-id="code-snippet" data-line-numbers="5-7">
+when()
+    .get("/api/v1/tags")
+    .then()
+    .body("tags", contains("Java", "Sessão técnica", "RestAssured"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="array-slide-2" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Acessando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    tags: [
+        "Java",
+        "Sessão técnica",
+        "RestAssured"
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="5-7">
+when()
+    .get("/api/v1/tags")
+    .then()
+    .body("tags", containsInAnyOrder("Java", "Sessão técnica", "RestAssured"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="array-slide-3" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Acessando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    tags: [
+        "Java",
+        "Sessão técnica",
+        "RestAssured"
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="5-7">
+when()
+    .get("/api/v1/tags")
+    .then()
+    .body("tags[0]", equalTo("Java"))
+    .body("tags[1]", equalTo("Sessão técnica"))
+    .body("tags[2]", equalTo("RestAssured"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="array-slide-4" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Acessando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+[
+    "Java",
+    "Sessão técnica",
+    "RestAssured"
+]
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="5-7">
+when()
+    .get("/api/v1/tags")
+    .then()
+    .body("[0]", equalTo("Java"))
+    .body("[1]", equalTo("Sessão técnica"))
+    .body("[2]", equalTo("RestAssured"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            </section>
+            <section>
+                Nomeie seus testes
+            </section>
+            <section>
+                <p>O que incluir nos testes unitários?</p>
+                <ul>
+                    <li>Happy path</li>
+                    <li>Bad path</li>
+                    <li>Edge cases</li>
+                    <li>Invariantes</li>
+                </ul>
+            </section>
+            <section>
+                Testes parametrizados
+            </section>
+        </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
+            display: "grid",
+            width: "100%",
+            height: "100%",
+
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+
+        Reveal.configure({ center: false });
+    </script>
+</body>
+
+</html>
