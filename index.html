@@ -472,13 +472,13 @@ when()
                     <header class="header">
                         <h1>Testes de API</h1>
                     </header>
-                    <p>Acessando elementos em arrays</p>
+                    <p>Testando elementos em arrays</p>
                     <div class="h-container">
                         <div class="left-section">
                             <p>JSON</p>
                             <pre><code data-id="json-snippet" data-line-numbers>
 {
-    tags: [
+    "tags": [
         "Java",
         "Sessão técnica",
         "RestAssured"
@@ -501,13 +501,13 @@ when()
                     <header class="header">
                         <h1>Testes de API</h1>
                     </header>
-                    <p>Acessando elementos em arrays</p>
+                    <p>Testando elementos em arrays</p>
                     <div class="h-container">
                         <div class="left-section">
                             <p>JSON</p>
                             <pre><code data-id="json-snippet" data-line-numbers>
 {
-    tags: [
+    "tags": [
         "Java",
         "Sessão técnica",
         "RestAssured"
@@ -521,12 +521,41 @@ when()
 when()
     .get("/api/v1/tags")
     .then()
-    .body("tags", containsInAnyOrder("Java", "Sessão técnica", "RestAssured"));
+    .body("tags", containsInAnyOrder("Java", "RestAssured", "Sessão técnica"));
                         </code></pre>
                         </div>
                     </div>
                 </section>
                 <section id="array-slide-3" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "tags": [
+        "Java",
+        "Sessão técnica",
+        "RestAssured"
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers="5-7">
+when()
+    .get("/api/v1/tags")
+    .then()
+    .body("tags", hasItems("Java", "RestAssured", "Sessão técnica"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="array-slide-4" data-auto-animate data-transition="slide-in">
                     <header class="header">
                         <h1>Testes de API</h1>
                     </header>
@@ -536,7 +565,7 @@ when()
                             <p>JSON</p>
                             <pre><code data-id="json-snippet" data-line-numbers>
 {
-    tags: [
+    "tags": [
         "Java",
         "Sessão técnica",
         "RestAssured"
@@ -557,7 +586,7 @@ when()
                         </div>
                     </div>
                 </section>
-                <section id="array-slide-4" data-auto-animate data-transition="slide-in">
+                <section id="array-slide-5" data-auto-animate data-transition="slide-in">
                     <header class="header">
                         <h1>Testes de API</h1>
                     </header>
@@ -587,22 +616,410 @@ when()
                     </div>
                 </section>
             </section>
+            <section id="obj-e-array">
+                <section id="obj-e-array-1" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios[0].id", equalTo(1));
+    .body("usuarios[0].nome", equalTo("João da Silva"));
+    .body("usuarios[1].id", equalTo(2));
+    .body("usuarios[1].nome", equalTo("Maria dos Santos"));
+    .body("usuarios[2].id", equalTo(3));
+    .body("usuarios[2].nome", equalTo("João Nascimento"));
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-e-array-2" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id");
+                        </code></pre>
+                            <pre><code>[]</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-e-array-3" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="5-6">
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id");
+                        </code></pre>
+                            <pre><code>[1]</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-e-array-4" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="9-10">
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id");
+                        </code></pre>
+                            <pre><code>[1,2]</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-e-array-5" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers="13-14">
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id");
+                        </code></pre>
+                            <pre><code>[1,2,3]</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="obj-e-array-6" data-auto-animate data-transition="slide-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id", contains(1, 2, 3));
+                        </code>
+                    </div>
+                </section>
+                <section id="obj-e-array-7" data-auto-animate data-transition="fade-in">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                    </header>
+                    <p>Testando elementos em arrays</p>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("usuarios.id", contains(1, 2, 3))
+    .body("usuarios.nome", 
+        contains("José da Silva", "Maria dos Santos", "João Nascimento"));
+                        </code>
+                    </div>
+                </section>
             </section>
-            <section>
-                Nomeie seus testes
-            </section>
-            <section>
-                <p>O que incluir nos testes unitários?</p>
-                <ul>
-                    <li>Happy path</li>
-                    <li>Bad path</li>
-                    <li>Edge cases</li>
-                    <li>Invariantes</li>
-                </ul>
-            </section>
-            <section>
-                Testes parametrizados
-            </section>
+            <section id="gpath" data-auto-animate>
+                <header class="header">
+                    <h1>Testes de API</h1>
+                    <p>Manipulações avançadas com GPath</p>
+                </header>
+                <pre><code>
+                body("catalogo.produtos.preco.sum() == 100", equalTo(true));
+                </code></pre>
+                            <pre><code>
+                body("usuarios.every { it.id != null }", equalTo(true));
+                </code></pre>
+                </section>
+                <section id="aplicacao-gpath" data-auto-animate>
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                        <p>Exemplo de uso</p>
+                    </header>
+                    <div class="h-container">
+                        <div class="left-section">
+                            <p>JSON</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+{
+    "quantidadeUsuarios": 3,
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "José da Silva"
+        },
+        {
+            "id": 2,
+            "nome": "Maria dos Santos"
+        },
+        {
+            "id": 3,
+            "nome": "João Nascimento"
+        }
+    ]
+}
+                        </code></pre>
+                        </div>
+                        <div class="right-section">
+                            <p>Teste</p>
+                            <pre><code data-id="code-snippet" data-line-numbers>
+final var QUANTIDADE_USUARIOS = 3;
+
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("quantidadeUsuarios", equalTo(QUANTIDADE_USUARIOS))
+    .body("usuarios.size()", equalTo(QUANTIDADE_USUARIOS));
+    
+                        </code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section id="salvar-resposta">
+                    <header class="header">
+                        <h1>Testes de API</h1>
+                        <p>Salvando respostas de requisições</p>
+                        <pre><code>
+Response resposta = when()
+   .get("/api/v1/algum-endpoint")
+   .then()
+   .extract()
+   .response();
+
+resposta.asString();
+resposta.asInputStream();
+resposta.asByteArray();
+                        </code></pre>
+                    </header>
+
+                </section>
+                <section id="testar-todos-items">
+                    <header class="header">
+                        <h1>Boas Práticas</h1>
+                        <p>Preciso testar todos os campos?</p>
+                    </header>
+                    <h1 class="fragment">SIM!</h1>
+                    <p class="fragment">...exceto em arrays</h1>
+
+                </section>
+                <section id="nomeie-testes">
+                    <header>
+                        <h1>Boas Práticas</h1>
+                        <h3>Nomeie seus testes</h3>
+                    </header>
+                    <div style="display: inherit; gap: 2px;">
+                        <p>Nome aleatório ❌</p>
+                        <pre><code data-trim class="language-java">
+
+@Test
+void test1(){
+    // Testes
+}
+                        </code></pre>
+                        <p>Usando anotação DisplayName </p>
+                        <pre><code data-trim class="language-java">
+
+@Test
+@DisplayName("Verifica se a API retorna os clientes da agência.")
+void test1(){
+    // Testes
+}
+                        </code></pre>
+                        <p>Adotar uma convenção de nomenclatura </p>
+                        <pre><code data-trim class="language-java">
+
+@Test
+void buscarClientes_deve_retornar_os_clientes_da_agencia(){
+    // Testes
+}
+                        </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <p>O que incluir nos testes unitários?</p>
+                    <ul>
+                        <li>Happy path</li>
+                        <li>Bad path</li>
+                        <li>Edge cases</li>
+                        <li>Invariantes</li>
+                    </ul>
+                </section>
+                <section>
+                    Testes parametrizados
+                </section>
         </div>
     </div>
 
