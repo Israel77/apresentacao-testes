@@ -17,3 +17,7 @@
 pre.code-wrapper {
     width: 100%;
 }
+
+.left-align {
+    text-align: left;
+}

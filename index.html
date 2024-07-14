@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" href="dist/reset.css">
     <link rel="stylesheet" href="dist/reveal.css">
-    <link rel="stylesheet" href="dist/theme/moon.css">
+    <link rel="stylesheet" href="dist/theme/black.css">
     <link rel="stylesheet" href="assets/styles.css">
 
     <!-- Theme used for syntax highlighted code -->
@@ -989,8 +989,8 @@ void test1(){
     // Testes
 }
                         </code></pre>
-                        <p>Usando anotação DisplayName </p>
-                        <pre><code data-trim class="language-java">
+                        <p class="fragment">Usando anotação DisplayName✅</p>
+                        <pre class="fragment"><code data-trim class="language-java">
 
 @Test
 @DisplayName("Verifica se a API retorna os clientes da agência.")
@@ -998,8 +998,8 @@ void test1(){
     // Testes
 }
                         </code></pre>
-                        <p>Adotar uma convenção de nomenclatura </p>
-                        <pre><code data-trim class="language-java">
+                        <p class="fragment">Adotar uma convenção de nomenclatura✅</p>
+                        <pre class="fragment"><code data-trim class="language-java">
 
 @Test
 void buscarClientes_deve_retornar_os_clientes_da_agencia(){
@@ -1008,17 +1008,356 @@ void buscarClientes_deve_retornar_os_clientes_da_agencia(){
                         </code></pre>
                     </div>
                 </section>
-                <section>
-                    <p>O que incluir nos testes unitários?</p>
-                    <ul>
-                        <li>Happy path</li>
-                        <li>Bad path</li>
-                        <li>Edge cases</li>
-                        <li>Invariantes</li>
-                    </ul>
+                <section id="testes-falham">
+                    <header class="header">
+                        <h1>Boas práticas</h1>
+                        <p>Testes devem falhar quando o código estiver incorreto</p>
+                    </header>
                 </section>
-                <section>
-                    Testes parametrizados
+                <section id="testar-individualmente">
+                    <header>
+                        <h1>Boas práticas</h1>
+                        <p>Todas as funções e métodos devem ser testados individualmente?</p>
+                    </header>
+                    <div style="display: flex; flex-direction: column;">
+                        <p class="left-align fragment">Não. Mas as seguintes devem se priorizadas:</p>
+                        <ul class="left-align">
+                            <li class="left-align fragment">Funções críticas para a aplicação.</li>
+                            <li class="left-align fragment">Pontos de integração(entrada e saída).</li>
+                            <li class="left-align fragment">Funções muito reutilizadas (com complexidade razoável).</li>
+                            <li class="left-align fragment">Funções e classes com lógica complexa.</li>
+                            <li class="left-align fragment">Correções de bugs.</li>
+                        </ul>
+                    </div>
+                </section>
+                <section id="testar-erros">
+                    <section>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Teste as ramificações do seu código</p>
+                        </header>
+                        <div class="left-section">
+                            <p>Código fonte</p>
+                            <pre><code data-id="json-snippet" data-line-numbers>
+class AtualizarSaldoService {
+    @Inject
+    CompraService compraService;
+
+    public int calcularSaldo(int saldoInicial, Compra compra) {
+        if (compra.valor <= saldoInicial) {
+            compraService.realizarCompra(compra);
+            return saldoInicial - compra.valor;
+        } else {
+            throw new ErroNegocial(ErrosDescricao.SALDO_INSUFICIENTE);
+        }
+    }
+}
+                        </code></pre>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Teste as ramificações do seu código</p>
+                        </header>
+                        <div class="right-section">
+                            <p>Testes</p>
+                            <pre><code data-trim data-id="code-snippet" data-line-numbers="|5-13|16-25">
+@QuarkusTest
+class AtualizarSaldoServiceTest {
+    // Mocks e inicializações...
+
+    @Test
+    @DisplayName("Deve retornar o saldo atualizado quando for possível realizar a compra.")
+    void calcularSaldo_deve_retornar_valor_atualizado_se_compra_possivel() {
+        final int SALDO_INICIAL = 1500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        assertEquals(500, atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro quando o saldo inicial não for suficiente para realizar a compra.")
+    void calcularSaldo_deve_lancar_erro_se_saldo_inicial_nao_for_suficiente() {
+        final int SALDO_INICIAL = 500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        assertThrows(ErroNegocial.class, () -> atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+    }
+}
+                        </code></pre>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Teste as ramificações do seu código</p>
+                        </header>
+                        <div class="right-section">
+                            <p>Testes</p>
+                            <pre><code data-trim data-id="code-snippet" data-line-numbers="16-28">
+@QuarkusTest
+class AtualizarSaldoServiceTest {
+    // Mocks e inicializações...
+
+    @Test
+    @DisplayName("Deve retornar o saldo atualizado quando for possível realizar a compra.")
+    void calcularSaldo_deve_retornar_valor_atualizado_se_compra_possivel() {
+        final int SALDO_INICIAL = 1500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        assertEquals(500, atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro quando o saldo inicial não for suficiente para realizar a compra.")
+    void calcularSaldo_deve_lancar_erro_se_saldo_inicial_nao_for_suficiente() {
+        final int SALDO_INICIAL = 500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        final var erro = assertThrows(ErroNegocial.class, () -> atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+
+        assertEquals("001", erro.getCode());
+        assertEquals("Saldo insuficiente para transação.", erro.getMessage());
+    }
+}
+                        </code></pre>
+                        </div>
+                    </section>
+                </section>
+                <section id="testar-limites" data-auto-animate>
+                    <section id="exemplo-compra" data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar condições limite</p>
+                        </header>
+                        <pre><code data-trim data-id="code-snippet" data-line-numbers="30-41">
+@QuarkusTest
+class AtualizarSaldoServiceTest {
+    // Mocks e inicializações...
+
+    @Test
+    @DisplayName("Deve retornar o saldo atualizado quando for possível realizar a compra.")
+    void calcularSaldo_deve_retornar_valor_atualizado_se_compra_possivel() {
+        final int SALDO_INICIAL = 1500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        assertEquals(500, atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro quando o saldo inicial não for suficiente para realizar a compra.")
+    void calcularSaldo_deve_lancar_erro_se_saldo_inicial_nao_for_suficiente() {
+        final int SALDO_INICIAL = 500;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        final var erro = assertThrows(ErroNegocial.class, () -> atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+
+        assertEquals("001", erro.getCode());
+        assertEquals("Saldo insuficiente para transação.", erro.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve zerar o saldo se valor da compra igual a saldo.")
+    void calcularSaldo_deve_retornar_zero_se_valor_igual_ao_saldo() {
+        final int SALDO_INICIAL = 1000;
+
+        final var compra = new Compra();
+        compra.setValor(1000);
+
+        assertEquals(0, atualizarSaldoService.calcularSaldo(SALDO_INICIAL, compra));
+    }
+}
+                        </code></pre>
+                    </section>
+                    <section id="exemplo-data" data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar condições limite</p>
+                        </header>
+                        <pre><code data-line-numbers="1-7|9-15|17-23" data-trim>
+@Test
+void emAtraso_deve_retornar_true_se_pagamento_feito_depois_do_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalData.of(1970, 1, 1);
+
+    assertTrue(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+
+@Test
+void emAtraso_deve_retornar_false_se_pagamento_feito_antes_do_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalDate.of(9999, 12, 12);
+
+    assertFalse(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+
+@Test
+void emAtraso_deve_retornar_false_se_pagamento_feito_no_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalData.now();
+
+    assertFalse(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+                        </code></pre>
+                    </section>
+                    <section id="exemplo-lista" data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar condições limite</p>
+                        </header>
+                        <pre><code data-line-numbers="3|5-10|13-18" data-trim>
+class ListarUsuariosServiceTest() {
+    // inicializações e mocks ...
+    final int QUANTIDADE_USUARIOS = 20;
+
+    @Test
+    @DisplayName("Deve retornar usuário se o índice for válido.")
+    void obterUsuario_deve_retornar_usuario_se_indice_valido() {
+        final int INDICE_BUSCA = 19;
+
+        assertDoesNotThrow(() -> listarUsuariosService.obterUsuario(INDICE_BUSCA));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção se o índice for inválido.")
+    void obterUsuario_deve_lancar_excecao_se_indice_invalido() {
+        final int INDICE_BUSCA = 20;
+
+        assertThrows(ErroNegocial.class, () -> listarUsuariosService.obterUsuario(INDICE_BUSCA));
+    }
+}
+                        </code></pre>
+                    </section>
+                </section>
+                <section id="testar-invariantes">
+                    <section data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar invariantes do código, quando possível</p>
+                        </header>
+
+                        <pre><code>
+
+final var QUANTIDADE_USUARIOS = 3;
+
+when()
+    .get("/api/v1/usuarios")
+    .then()
+    .body("quantidadeUsuarios", equalTo(QUANTIDADE_USUARIOS))
+    .body("usuarios.size()", equalTo(QUANTIDADE_USUARIOS));
+                    </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar invariantes do código, quando possível</p>
+                        </header>
+
+                        <pre><code data-trim>
+@Test
+void limites_individuais_devem_ser_menores_ou_iguais_ao_limite_unico() {
+    // Obter dados do cartão
+    final DadosCartao dadosCartao = ...
+
+    // Obter o maior limite
+    var maiorLimite = dadosCartao.getLimites().stream()
+                        .mapToInt(limite -> limite.getValor())
+                        .max();
+    
+    assertTrue(maiorLimite.getAsInt() <= dadosCartao.getLimiteUnico());
+}
+</code></pre>
+                    </section>
+                </section>
+                <section id="testes-parametrizados">
+                    <section>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testes parametrizados</p>
+                        </header>
+                        <pre><code>
+@ParameterizedTest
+@CsvSource({
+    "teste@bb.com.br, true",
+    "usuario.nome+tag@bb.com.br, true",
+    "usuario@, false",
+    "@bb.com.br, false",
+    "bb.com.br, false",
+    "test@@bb.com.br, false"
+})
+void validarEmail_deve_retornar_true_se_email_for_valido(String email, boolean valido) {
+    assertEquals(valido, validarEmailService.validarEmail(email));
+}
+
+
+                    </code></pre>
+                    </section>
+                    <section>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar parametrizados</p>
+                        </header>
+                        <pre><code>
+@ParameterizedTest
+@ValueSource(ints = {14, 17, 19, 21, 25, 28, 29, 43, 54})
+void deve_retornar_true_se_codigo_for_valido(int codigo) {
+    assertTrue(validarCodigo(codigo));
+}
+                    </code></pre>
+                    </section>
+                    <section>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar parametrizados</p>
+                        </header>
+                        <pre><code>
+class ListarUsuariosServiceTest() {
+    // inicializações e mocks ...
+    final static int QUANTIDADE_USUARIOS = 20;
+
+    private static IntStream gerarIndices() {
+        return IntStream.range(0, QUANTIDADE_USUARIOS);
+    }
+
+    @Test
+    @DisplayName("Deve retornar usuário se o índice for válido.")
+    @MethodSource("gerarIndices")
+    void obterUsuario_deve_retornar_usuario_se_indice_valido(int indice) {
+        assertDoesNotThrow(() -> listarUsuariosService.obterUsuario(indice));
+    }
+}
+                        </code></pre>
+                    </section>
+                </section>
+                <section id="referencias">
+                    <header>
+                        <p>Referências</p>
+                    </header>
+                    <ul>
+                        <li>HENNEY, K. <strong>97 Things Every Programmer Should Know. </strong>[s.l.] O’Reilly Media,
+                            2010. </li>
+                        <li>
+                            JORGENSEN, P. <strong> Software testing : a craftman’s approach. </strong>Boca Raton:
+                            Auerbach, 2018.
+                        </li>
+                        <li>
+                            DEHGHANI, A. <strong>Guide to JUnit 5 Parameterized Tests</strong>. Disponível em:
+                            &lthttps://www.baeldung.com/parameterized-tests-junit-5&gt.
+                        </li>
+                    </ul>
                 </section>
         </div>
     </div>
