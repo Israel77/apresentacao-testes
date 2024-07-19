@@ -22,6 +22,9 @@
             <section id="intro" class="center">
                 <h1>Boas práticas de testes</h1>
                 <p>Israel Silvino Melo Batista</p>
+                <div>
+                    <img src="assets/cc-by-sa.png" alt="Creative Commons BY-SA">
+                </div>
             </section>
             <section id="motivacao">
                 <header class="header">Por que fazer testes automatizados?</header>
@@ -36,8 +39,11 @@
             </section>
             <section id="tipos-testes">
                 Principais tipos de testes:
-                <p>Testes de API</p>
-                <p>Testes unitários</p>
+                <ul>
+                    <li>Testes manuais</li>
+                    <li>Testes unitários</li>
+                    <li>Testes de API</li>
+                </ul>
             </section>
             <section id="restassured-intro" data-auto-animate>
                 <header class="header">
@@ -76,7 +82,36 @@ given()
                         <p data-id="explanation">Especificação da requisição</p>
                     </div>
                     <div class="right-section">
-                        <pre><code data-id="code-snippet" data-line-numbers="2-8|2|3|4|5|6|7-8|2-8|9-13|10|11-13">
+                        <pre><code data-id="code-snippet" data-line-numbers="2-8|2|3|4|5|6|7-8|2-8|9-13|10">
+given()
+    .contentType(MediaType.APPLICATION_JSON)
+    .header("X-Auth-Token", token)
+    .queryParam("pagina", 1)
+    .body(requisicao)
+    .when()
+    .post("api/v1/usuarios")
+    .then()
+    .statusCode(200)
+    .body("qtdUsuarios", equalTo(3))
+    .body("usuarios[0].id", equalTo(1))
+    .body("usuarios[0].nome", equalTo("João da Silva"));
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section id="hamcrest" data-auto-animate>
+                <header class="header">
+                    <h1>Testes de API</h1>
+                </header>
+                <div class="h-container">
+                    <div class="left-section">
+                        <h3 data-id="subtitle">RestAssured</h3>
+                        <p data-id="explanation">Especificação da requisição</p>
+                        <h3 data-id="subtitle">Hamcrest</h3>
+                        <p data-id="explanation">Verifica padrões em objetos do Java</p>
+                    </div>
+                    <div class="right-section">
+                        <pre><code data-id="code-snippet" data-line-numbers="11-13">
 given()
     .contentType(MediaType.APPLICATION_JSON)
     .header("X-Auth-Token", token)
@@ -550,7 +585,7 @@ when()
 when()
     .get("/api/v1/tags")
     .then()
-    .body("tags", hasItems("Java", "RestAssured", "Sessão técnica"));
+    .body("tags", hasItems("RestAssured", "Java"));
                         </code></pre>
                         </div>
                     </div>
@@ -1013,6 +1048,10 @@ void buscarClientes_deve_retornar_os_clientes_da_agencia(){
                         <h1>Boas práticas</h1>
                         <p>Testes devem falhar quando o código estiver incorreto</p>
                     </header>
+                    <blockquote>
+                        <p>&ldquo;Nunca confie em um teste que você não viu falhar.&rdquo;</p>
+                        <p style="text-align: left;"> - Martin van Dijk</p>
+                    </blockquote>
                 </section>
                 <section id="testar-individualmente">
                     <header>
@@ -1020,7 +1059,7 @@ void buscarClientes_deve_retornar_os_clientes_da_agencia(){
                         <p>Todas as funções e métodos devem ser testados individualmente?</p>
                     </header>
                     <div style="display: flex; flex-direction: column;">
-                        <p class="left-align fragment">Não. Mas as seguintes devem se priorizadas:</p>
+                        <p class="left-align fragment">Não necessariamente. Mas as seguintes devem se priorizadas:</p>
                         <ul class="left-align">
                             <li class="left-align fragment">Funções críticas para a aplicação.</li>
                             <li class="left-align fragment">Pontos de integração(entrada e saída).</li>
@@ -1170,7 +1209,7 @@ class AtualizarSaldoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve zerar o saldo se valor da compra igual a saldo.")
+    @DisplayName("Deve zerar o saldo se o valor da compra for igual ao saldo inicial.")
     void calcularSaldo_deve_retornar_zero_se_valor_igual_ao_saldo() {
         final int SALDO_INICIAL = 1000;
 
@@ -1187,7 +1226,7 @@ class AtualizarSaldoServiceTest {
                             <h1>Boas práticas</h1>
                             <p>Testar condições limite</p>
                         </header>
-                        <pre><code data-line-numbers="1-7|9-15|17-23" data-trim>
+                        <pre><code data-auto-animate data-line-numbers="1-7|9-15|17-23" data-trim>
 @Test
 void emAtraso_deve_retornar_true_se_pagamento_feito_depois_do_prazo() {
     final var DATA_PAGAMENTO = LocalDate.now();
@@ -1200,6 +1239,37 @@ void emAtraso_deve_retornar_true_se_pagamento_feito_depois_do_prazo() {
 void emAtraso_deve_retornar_false_se_pagamento_feito_antes_do_prazo() {
     final var DATA_PAGAMENTO = LocalDate.now();
     final var PRAZO = LocalDate.of(9999, 12, 12);
+
+    assertFalse(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+
+@Test
+void emAtraso_deve_retornar_false_se_pagamento_feito_no_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalData.now();
+
+    assertFalse(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+                        </code></pre>
+                    </section>
+                    <section id="exemplo-data-correcao" data-auto-animate>
+                        <header class="header">
+                            <h1>Boas práticas</h1>
+                            <p>Testar condições limite</p>
+                        </header>
+                        <pre><code data-auto-animate data-line-numbers="9-15" data-trim>
+@Test
+void emAtraso_deve_retornar_true_se_pagamento_feito_depois_do_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalData.of(1970, 1, 1);
+
+    assertTrue(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
+}
+
+@Test
+void emAtraso_deve_retornar_false_se_pagamento_feito_antes_do_prazo() {
+    final var DATA_PAGAMENTO = LocalDate.now();
+    final var PRAZO = LocalDate.now().plusDays(1);
 
     assertFalse(pagamentoService.emAtraso(DATA_PAGAMENTO, PRAZO));
 }
@@ -1288,7 +1358,7 @@ void limites_individuais_devem_ser_menores_ou_iguais_ao_limite_unico() {
                             <h1>Boas práticas</h1>
                             <p>Testes parametrizados</p>
                         </header>
-                        <pre><code>
+                        <pre><code class="language-java">
 @ParameterizedTest
 @CsvSource({
     "teste@bb.com.br, true",
@@ -1308,9 +1378,9 @@ void validarEmail_deve_retornar_true_se_email_for_valido(String email, boolean v
                     <section>
                         <header class="header">
                             <h1>Boas práticas</h1>
-                            <p>Testar parametrizados</p>
+                            <p>Testes parametrizados</p>
                         </header>
-                        <pre><code>
+                        <pre><code class="language-java">
 @ParameterizedTest
 @ValueSource(ints = {14, 17, 19, 21, 25, 28, 29, 43, 54})
 void deve_retornar_true_se_codigo_for_valido(int codigo) {
@@ -1323,7 +1393,7 @@ void deve_retornar_true_se_codigo_for_valido(int codigo) {
                             <h1>Boas práticas</h1>
                             <p>Testar parametrizados</p>
                         </header>
-                        <pre><code>
+                        <pre><code class="language-java">
 class ListarUsuariosServiceTest() {
     // inicializações e mocks ...
     final static int QUANTIDADE_USUARIOS = 20;
@@ -1332,7 +1402,7 @@ class ListarUsuariosServiceTest() {
         return IntStream.range(0, QUANTIDADE_USUARIOS);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Deve retornar usuário se o índice for válido.")
     @MethodSource("gerarIndices")
     void obterUsuario_deve_retornar_usuario_se_indice_valido(int indice) {
@@ -1357,7 +1427,23 @@ class ListarUsuariosServiceTest() {
                             DEHGHANI, A. <strong>Guide to JUnit 5 Parameterized Tests</strong>. Disponível em:
                             &lthttps://www.baeldung.com/parameterized-tests-junit-5&gt.
                         </li>
+                        <li>
+                            GOTO CONFERENCES.<strong>Structure and Interpretation of Test Cases • Kevlin Henney • GOTO
+                                2022.</strong>
+                            Disponível em: &lthttps: //www.youtube.com/watch?v=MWsk1h8pv2Q&gt. Acesso em: 19 jul. 2024.
+                        </li>
+                        <li>
+                            <strong> 5.5.0 javadoc (io.rest-assured).</strong> Disponível em: &lthttps:
+                            //www.javadoc.io/doc/io.rest-assured/rest-assured&gt. Acesso em: 19 jul. 2024.
+                        </li>
+                        <li>
+                            <strong> (Hamcrest 2.2 API).</strong> Disponível em: &lthttps:
+                            //hamcrest.org/JavaHamcrest/javadoc/2.2/org/hamcrest/Matchers&gt. Acesso em: 19 jul. 2024.
+                        </li>
                     </ul>
+                </section>
+                <section style="display: grid; height: 100vh;">
+                    <h1 style="place-self: center;">Obrigado!</h1>
                 </section>
         </div>
     </div>

@@ -21,3 +21,7 @@ pre.code-wrapper {
 .left-align {
     text-align: left;
 }
+
+#referencias strong {
+    color: lightblue;
+}
